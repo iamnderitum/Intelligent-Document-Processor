@@ -16,7 +16,7 @@ def imageData(image_path):
     return image_data.shape, image_data.dtype, image_data
 
 if __name__ == "__main__":
-      image_path = "../data/output-images/ID_FRONT.png"
+      image_path = "../data/output-images/title_deed_resized.png"
 
       image_data = imageData(image_path)
       print(image_data)

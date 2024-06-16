@@ -2,7 +2,8 @@
 
 import cv2
 import numpy as np
-
+#from sklearn import preprocessing
+#import sklearn
 class PreProcessor:
     def __init__(self,image,  process_name="Image Pre-Processor") -> None:
         self.process_name = process_name
@@ -60,11 +61,11 @@ class PreProcessor:
         else:
             angle = -angle
 
-        (h, w) = image.shape[:2]
-        center = (w // 2, h // 2)
+        (image_height, image_width) = image.shape[:2]
+        center = (image_width // 2, image_height // 2)
 
         M = cv2.getRotationMatrix2D(center, angle, 1.0)
-        rotated = cv2.warpAffine(image, M, (w, h),
+        rotated = cv2.warpAffine(image, M, (image_width, image_height),
                                  flags = cv2.INTER_CUBIC,
                                  borderMode = cv2.BORDER_REPLICATE)
         
@@ -73,3 +74,45 @@ class PreProcessor:
     # Template Matching
     def match_template(image, template):
         return cv2.matchTemplate(image, template, cv2.TM_CCOEFF_NORMED)
+    
+
+class ImagePreProcessor:
+    def __init__(self, image, process_name="Image Preprocessor") -> None:
+        self.image = image
+
+    def resize(self, image):
+        image_height, image_width, color_channels = image.shape
+        image_type = image.dtype
+        print("Initial Image Information: ")
+        print("-----------------------------\n")
+        print(f"Height: {image_height}\n Width:{image_width} \n Color Channels: {color_channels}")
+        print(f"Image Type: {image_type}")
+
+        new_width = 400
+        ration = new_width / image_width
+
+        new_height = int(image_height * ration)
+        new_dim = (new_width, new_height)
+        print('Dimensions of the new image will be: \n height: {}'' \n width: {}'
+            .format(new_dim[1], new_dim[0]))
+        
+        resized = cv2.resize(image, new_dim, interpolation=cv2.INTER_AREA)
+
+        return resized
+    
+    def normalize(self, image, new_min=0, new_max=255):
+        image_size, image_type, image_shape= image.size, image.dtype, image.shape
+        print(f"Image Properties: \nShape: {image_shape} \n Size: {image_size}, \n Type: {image_type}\n\n")
+        print("Image Array - Pixel\n",image[:1])
+
+        image_array = np.asarray(image)
+        
+        min_val = np.min(image)
+        max_val = np.max(image)
+        normalized_image = (image - min_val) / max_val - min_val
+        normalized_image = normalized_image * (new_max - new_min) + new_min
+        print("\n\n", normalized_image[:1])
+
+        return normalized_image
+
+        

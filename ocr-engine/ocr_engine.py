@@ -16,15 +16,15 @@ class OcrEngine:
     def getBoxText(self, image):
         img = cv2.imread(image)
 
-        h, w, c = img.shape
+        image_height, image_width, color_channels = img.shape
 
         boxes = pytesseract.image_to_boxes(img)
 
         for b in boxes.splitlines():
             b = b.split("")
             img = cv2.rectangle(img,
-                                (int(b[1]), h, int(b[2])),
-                                (int(b[3]), h - int(b[4])),
+                                (int(b[1]), image_height, int(b[2])),
+                                (int(b[3]), image_height - int(b[4])),
                                 (0, 255, 0), 2)
             
         cv2.imshow("Image", img)
